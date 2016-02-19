@@ -1,0 +1,42 @@
+document.write("Hello world!");
+
+var promise = new Promise((resolve) => {
+    setTimeout(() => {
+        console.log("Promise timeout hit");
+        resolve(66);
+    }, 500);
+});
+
+promise.then((x) => console.log("Then1", x));
+promise.then((x) => console.log("Then2", x));
+
+var source = new Rx.Observable.create((observer) => {
+    var id = setTimeout(() => {
+        console.log("Observable timeout hit");
+        observer.onNext(87);
+    }, 500);
+
+    return () => {
+        clearTimeout(id);
+        console.log("Disposing...");
+    };
+});
+
+// var disposable = source.forEach(x => console.log("observable.forEach1", x));
+var disposable = source
+    .map(x => x+="!")
+    .subscribe(
+        (data) => console.log("Exito ", data)
+    );
+// setTimeout(() => {
+//     disposable.dispose();
+// }, 250);
+source.forEach(x => console.log("observable.forEach2", x));
+
+// class Animal {
+//     walk() {
+//         console.log("walking...");
+//     };
+// }
+// var animal = new Animal();
+// animal.walk();
