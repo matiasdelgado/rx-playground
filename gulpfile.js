@@ -13,7 +13,9 @@ gulp.task("debug", function() {
         if (obj.type === 'changed') {
             gulp.src(obj.path, { base: './' })
                 .pipe(plumber({ errorHandler: function(error) { console.log(error); }}))
-                .pipe(babel())
+                .pipe(babel({
+                    presets: ['es2015']
+                }))
                 .pipe(rename(function(path) {
                     path.basename = path.basename.replace(/-es6$/, '');
                 }))

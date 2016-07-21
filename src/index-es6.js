@@ -49,13 +49,15 @@ source.forEach((e) => {
 
 // Process the results as they come up
 var observable = Rx.Observable.create((observer) => {
-    var data = [1,2,3,4,5,6], index = 0;
+    var data = [1, 2, 3, 4, 5, 6],
+        index = 0;
     var id = setInterval(() => {
         if (index < data.length) {
             observer.onNext(data[index]);
             index++;
         } else {
             clearTimeout(id);
+            observer.onCompleted();
         }
     }, 1000);
 });
@@ -64,4 +66,7 @@ observable
         console.log("Filtering", x);
         return x % 2 === 0;
     })
-    .forEach(x => console.log(x));
+    .forEach(
+        data => console.log("Data: ", data),
+        error => console.log("Error: ", error),
+        complete => console.log("Complete!"));
