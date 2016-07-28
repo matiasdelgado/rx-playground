@@ -1,17 +1,18 @@
 const myInput = $("#myInput");
 const results = $("#results");
 
-let source = Rx.Observable.fromEvent(myInput, "keyup")
-    // .map(event => {
-    //     return event.target.value;
-    // })
-    .pluck("target", "value")
-    .filter(x => {
-        return x.length >= 3;
+var source = Rx.Observable.fromEvent(myInput, "keyup")
+    .map(event => {
+        return event.target.value;
+    })
+    .filter(text => {
+        return text.length > 4;
     })
     .debounce(500)
     .distinctUntilChanged()
-    .flatMap(x => searchWikipedia(x))
+    .flatMap(text => {
+        return searchWikipedia(text);
+    })
     .subscribe(
         data => {
             console.log("Subscribe: ", data);
@@ -25,7 +26,7 @@ let source = Rx.Observable.fromEvent(myInput, "keyup")
 function searchWikipedia (term) {
     console.log("Wikipedia...");
   return $.ajax({
-    url: 'https://en.wikipedia.org/w/api.php',
+    url: 'https://en.wikipedia.org/w/api.ph',
     dataType: 'jsonp',
     data: {
       action: 'opensearch',

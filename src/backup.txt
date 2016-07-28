@@ -1,0 +1,66 @@
+let zoneSpec = {
+    onInvoke(parent, current, target, task, applyThis, applyArgs, source) {
+        console.time("profiling");
+        console.log("Invoking");
+        if (task.name !== "alert") {
+            parent.invoke(target, task);
+        } else {
+            console.log("ALERT!!", applyArgs[0]);
+        }
+    },
+    // onScheduleTask(parent, current, target, task) {
+    //     console.log('Scheduled ' + task.source + ' => ' + task.data.handleId);
+    //     parent.scheduleTask(target, task);
+    // },
+    onHasTask(parent, current, target, task) {
+        if (!task.macroTask) {
+            console.log("No more tasks");
+            console.timeEnd("profiling");
+        } else {
+            console.log("Remaining tasks");
+        }
+    },
+    onInvokeTask(parent, current, target, task) {
+        console.log("Invoking task ", task);
+        parent.invokeTask(target, task);
+    }
+};
+let myZone = Zone.current.fork(zoneSpec);
+myZone.run(main);
+
+function main() {
+    a();
+    alert("@AngularMVD");
+    b();
+
+    b2.addEventListener('click', function () {
+        console.log("Click event");
+    });
+
+    // window.addEventListener("mousemove", function() {
+    //     console.log("Moving");
+    // })
+
+    let p = new Promise((resolve) => {
+        resolve(1891);
+    }).then(function () {
+        console.log('promise1');
+    }).then(function () {
+        console.log('promise2');
+    });
+}
+
+function a() {
+    let count = 0;
+    let timer = setTimeout(() => {
+        console.log("function a ", count);
+        if (count++ > 5) {
+            clearTimeout(timer);
+        }
+    }, 10);
+}
+
+function b() {
+    console.log("function b");
+}
+
